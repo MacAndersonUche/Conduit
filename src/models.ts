@@ -14,7 +14,7 @@ export interface Transaction {
 export interface Entry {
   id: string;             
   transactionId: string;  
-  accountId: string;      
+  accountId: string;      // Changed from account_id 
   direction: "debit" | "credit";
   amount: number;         
 }
