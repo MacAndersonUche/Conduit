@@ -7,7 +7,11 @@ const isValidEntry = (entry: Entry) => {
   return "accountId" in entry && "direction" in entry && "amount" in entry;
 };
 
-export const validateTransaction = (req: Request, res: Response, next: NextFunction) => {
+export const validateTransaction = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { entries }: Transaction = req.body;
 
   if (!entries || entries.length < 2 || !entries.every(isValidEntry)) {
@@ -33,7 +37,9 @@ export const createAccount = (req: Request, res: Response) => {
   const { id, name, direction, balance } = req.body;
 
   if (!direction || !["debit", "credit"].includes(direction)) {
-    return res.status(400).json({ error: "direction must be 'debit' or 'credit'" });
+    return res
+      .status(400)
+      .json({ error: "direction must be 'debit' or 'credit'" });
   }
 
   const account: Account = {
@@ -67,7 +73,9 @@ export const createTransactions = (req: Request, res: Response) => {
   for (const e of reqEntries) {
     const account = accounts.find((a) => a.id === e.accountId);
     if (!account) {
-      return res.status(400).json({ error: `Account not found: ${e.accountId}` });
+      return res
+        .status(400)
+        .json({ error: `Account not found: ${e.accountId}` });
     }
 
     const newEntry: Entry = {

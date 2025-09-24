@@ -1,20 +1,20 @@
 export interface Account {
-  id: string;             
-  name?: string;          
+  id: string;
+  name?: string;
   direction: "debit" | "credit";
-  balance: number;         // Updated only via Entries
+  balance: number; // Updated only via Entries
 }
 
 export interface Transaction {
-  id: string;             
-  name?: string;          
-  entries: Entry[];       
+  id: string;
+  name?: string;
+  entries: Entry[];
 }
 
 export interface Entry {
-  id: string;             
-  transactionId: string;  
-  accountId: string;      // Changed from account_id 
+  id: string;
+  transactionId: string;
+  accountId: string; // Changed from account_id
   direction: "debit" | "credit";
-  amount: number;         
+  amount: number;
 }

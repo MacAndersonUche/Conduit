@@ -11,7 +11,7 @@ so please make sure your solution is easy to run and modify.
 A ledger is one of the fundamental building blocks of financial applications.
 It powers accounting systems, blockchains, and anything that tracks money movement.
 
-We’ll be building a double-entry accounting ledger. 
+We’ll be building a double-entry accounting ledger.
 In this system, every transaction is recorded as a set of entries, one or more debits and one or more credits, whose total value always balances to zero.
 Debiting (withdrawing) funds from one account requires crediting (depositing) the same amount to another.
 This structure makes it easy to detect common accounting errors; if the sum of all debits and credits across all transactions isn’t zero, a mistake has occurred.
@@ -20,9 +20,9 @@ A basic transaction representing the withdrawal of $100.00 from a "Discretionary
 Funds" account as cash to be placed in the owner's wallet might be represented
 in a double-entry ledger system like this:
 
-| Discretionary Funds |    Cash      |
-|---------------------|--------------|
-| - 100.00            | + $100.00    |
+| Discretionary Funds | Cash      |
+| ------------------- | --------- |
+| - 100.00            | + $100.00 |
 
 Our ledger system also includes the notion of account directions - some accounts
 represent primarily liabilities or the movement of funds out of our ownership,
@@ -37,9 +37,9 @@ An **account** represents what a traditional account would in a double-entry
 accounting system. It can be used to represent an asset, liability, expense or
 anything else that we want. Some important properties that accounts have:
 
- - Accounts have a direction, either “debit” or “credit”.
- - Account balances can never be modified directly, they can only be modified
-   by creating transactions.
+- Accounts have a direction, either “debit” or “credit”.
+- Account balances can never be modified directly, they can only be modified
+  by creating transactions.
 
 ### Transactions
 
@@ -50,8 +50,8 @@ entries, each of which represents modifications to the balance of an account.
 
 Some important properties that transactions have:
 
- - The entries have to balance. This means the sum of all the debits must equal
-   the sum of all the credits.
+- The entries have to balance. This means the sum of all the debits must equal
+  the sum of all the credits.
 
 ### Entries
 
@@ -59,11 +59,11 @@ An **entry** denotes a change in the balance of an account.
 
 Here's the schema for an entry:
 
-| Field     | Description                                               |
-|-----------|-----------------------------------------------------------|
-| id        | If not provided it is generated on object creation.       |
-| direction | Required. Must be either "debit" or "credit".             |
-| amount    | Represents the amount of the entry in USD.                |
+| Field     | Description                                         |
+| --------- | --------------------------------------------------- |
+| id        | If not provided it is generated on object creation. |
+| direction | Required. Must be either "debit" or "credit".       |
+| amount    | Represents the amount of the entry in USD.          |
 
 ## Rules
 
@@ -77,6 +77,7 @@ be updated with the corresponding ledger entry amounts.
 ### Applying a Ledger Entry
 
 When an entry is applied to an account, the balance is updated based on the relationship between the account’s direction and the entry’s direction:
+
 - If the directions are the same, the balance is increased by the entry amount (added).
 - If the directions differ, the balance is decreased by the entry amount (subtracted).
 
@@ -86,7 +87,7 @@ Here are some example entries and their impact on the accounts they're applied
 to:
 
 | Starting Account Balance | Account Direction | Entry Direction | Entry Amount | Ending Account Balance |
-|--------------------------|-------------------|-----------------|--------------|------------------------|
+| ------------------------ | ----------------- | --------------- | ------------ | ---------------------- |
 | 0                        | debit             | debit           | 100          | 100                    |
 | 0                        | credit            | credit          | 100          | 100                    |
 | 100                      | debit             | credit          | 100          | 0                      |
@@ -99,12 +100,12 @@ create transactions. They'll do so using the HTTP/JSON API defined here.
 
 ### POST /accounts
 
-| Field     | Description                                               |
-|-----------|-----------------------------------------------------------|
-| id        | If not provided it is generated on object creation.       |
-| name      | Optional label for the account.                           |                                                
-| balance   | Represents the account’s initial balance in USD.          |
-| direction | Required. Must be either "debit" or "credit".             |
+| Field     | Description                                         |
+| --------- | --------------------------------------------------- |
+| id        | If not provided it is generated on object creation. |
+| name      | Optional label for the account.                     |
+| balance   | Represents the account’s initial balance in USD.    |
+| direction | Required. Must be either "debit" or "credit".       |
 
 **Example Request:**
 
@@ -152,11 +153,11 @@ curl --location --request GET 'localhost:5000/accounts/fa967ec9-5be2-4c26-a874-7
 
 ### POST /transactions
 
-| Field   | Description                                               |
-|---------|-----------------------------------------------------------|
-| id      | If not provided it is generated on object creation.       |
-| name    | Optional label for the account.                           |
-| entries | an array of ledger entry objects                          |
+| Field   | Description                                         |
+| ------- | --------------------------------------------------- |
+| id      | If not provided it is generated on object creation. |
+| name    | Optional label for the account.                     |
+| entries | an array of ledger entry objects                    |
 
 **Example Request:**
 
@@ -205,13 +206,12 @@ curl --location --request POST 'localhost:5000/transactions' \
 }
 ```
 
-
 ## Instructions
 
-Implement the ledger described above. 
-Your ledger should provide the API described, accessible via HTTP. 
-You can use any programming language or framework you like. 
-Focus on correctly handling accounts, transactions, and entries; we want to see your business logic and API design. 
+Implement the ledger described above.
+Your ledger should provide the API described, accessible via HTTP.
+You can use any programming language or framework you like.
+Focus on correctly handling accounts, transactions, and entries; we want to see your business logic and API design.
 You do not need set up any database infrastructure; you may just use an in-memory storage or similar.
 
 Note: Ledgers can seem deceptively simple. We encourage you to write tests to
@@ -223,4 +223,3 @@ Include a README.md with clear instructions on how to run your code, as well as 
 If you run into trouble, or have any questions, please don't hesitate to reach
 out to our team for help. You can reach us by replying to the email that you
 received the exercise from, or by reaching out to carreers@conduit.financial.
-
