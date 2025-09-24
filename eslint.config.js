@@ -1,15 +1,16 @@
-import eslint from "@eslint/js";
-import tseslint from "typescript-eslint";
-import prettier from "eslint-config-prettier";
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import prettier from 'eslint-config-prettier';
 
 /** @type {Linter.Config[]} */
 export default [
   {
     ignores: [
-      "dist/**", // compiled output
-      "node_modules/**",
-      "*prettier.cjs", // prettier configuration file
-      "coverage/**", // test coverage output
+      'dist/**', // compiled output
+      'node_modules/**',
+      '*prettier.cjs', // prettier configuration file
+      'coverage/**', // test coverage output
+      'vitest.config.ts', // vitest configuration file
     ],
   },
   // Base JS rules
@@ -22,19 +23,19 @@ export default [
   prettier,
 
   {
-    files: ["**/*.ts"],
+    files: ['**/*.ts'],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
-        project: "./tsconfig.json",
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        project: './tsconfig.json',
       },
     },
     rules: {
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        { argsIgnorePattern: "^_" },
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_' },
       ],
     },
   },
