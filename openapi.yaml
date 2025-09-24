@@ -1,0 +1,290 @@
+openapi: 3.0.3
+info:
+  title: Conduit Ledger API
+  description: A double-entry accounting ledger API for managing accounts and transactions
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@conduit.com
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+
+paths:
+  /accounts:
+    post:
+      summary: Create a new account
+      description: Creates a new account with the specified properties
+      operationId: createAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountRequest'
+            examples:
+              debit_account:
+                summary: Debit Account
+                value:
+                  name: 'Cash Account'
+                  direction: 'debit'
+                  balance: 1000
+              credit_account:
+                summary: Credit Account
+                value:
+                  name: 'Revenue Account'
+                  direction: 'credit'
+                  balance: 0
+      responses:
+        '201':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /accounts/{id}:
+    get:
+      summary: Get account by ID
+      description: Retrieves a specific account by its ID
+      operationId: getAccount
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Account ID
+          schema:
+            type: string
+            example: 'acc-123'
+      responses:
+        '200':
+          description: Account found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /transactions:
+    post:
+      summary: Create a new transaction
+      description: Creates a new transaction with balanced entries
+      operationId: createTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+            examples:
+              simple_transaction:
+                summary: Simple Transaction
+                value:
+                  name: 'Payment Received'
+                  entries:
+                    - accountId: 'cash-acc'
+                      direction: 'debit'
+                      amount: 100
+                    - accountId: 'revenue-acc'
+                      direction: 'credit'
+                      amount: 100
+              multi_entry_transaction:
+                summary: Multi-Entry Transaction
+                value:
+                  name: 'Complex Payment'
+                  entries:
+                    - accountId: 'cash-acc'
+                      direction: 'debit'
+                      amount: 150
+                    - accountId: 'bank-acc'
+                      direction: 'debit'
+                      amount: 50
+                    - accountId: 'revenue-acc'
+                      direction: 'credit'
+                      amount: 200
+      responses:
+        '201':
+          description: Transaction created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: Invalid transaction data or entries do not balance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Account:
+      type: object
+      required:
+        - id
+        - direction
+        - balance
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the account
+          example: 'acc-123'
+        name:
+          type: string
+          description: Human-readable name for the account
+          example: 'Cash Account'
+        direction:
+          type: string
+          enum: [debit, credit]
+          description: Account type determining how balances are affected
+          example: 'debit'
+        balance:
+          type: number
+          description: Current account balance
+          example: 1000.50
+
+    CreateAccountRequest:
+      type: object
+      required:
+        - direction
+      properties:
+        id:
+          type: string
+          description: Optional custom ID (UUID generated if not provided)
+          example: 'custom-acc-id'
+        name:
+          type: string
+          description: Human-readable name for the account
+          example: 'Cash Account'
+        direction:
+          type: string
+          enum: [debit, credit]
+          description: Account type determining how balances are affected
+          example: 'debit'
+        balance:
+          type: number
+          default: 0
+          description: Initial account balance
+          example: 1000
+
+    Transaction:
+      type: object
+      required:
+        - id
+        - entries
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the transaction
+          example: 'txn-456'
+        name:
+          type: string
+          description: Human-readable name for the transaction
+          example: 'Payment Received'
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entry'
+          description: List of transaction entries
+
+    Entry:
+      type: object
+      required:
+        - id
+        - transactionId
+        - accountId
+        - direction
+        - amount
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the entry
+          example: 'entry-789'
+        transactionId:
+          type: string
+          description: ID of the transaction this entry belongs to
+          example: 'txn-456'
+        accountId:
+          type: string
+          description: ID of the account this entry affects
+          example: 'acc-123'
+        direction:
+          type: string
+          enum: [debit, credit]
+          description: Entry direction
+          example: 'debit'
+        amount:
+          type: number
+          minimum: 0
+          description: Entry amount
+          example: 100.00
+
+    CreateTransactionRequest:
+      type: object
+      required:
+        - entries
+      properties:
+        id:
+          type: string
+          description: Optional custom ID (UUID generated if not provided)
+          example: 'custom-txn-id'
+        name:
+          type: string
+          description: Human-readable name for the transaction
+          example: 'Payment Received'
+        entries:
+          type: array
+          minItems: 2
+          items:
+            $ref: '#/components/schemas/CreateEntryRequest'
+          description: List of transaction entries (must balance)
+
+    CreateEntryRequest:
+      type: object
+      required:
+        - accountId
+        - direction
+        - amount
+      properties:
+        accountId:
+          type: string
+          description: ID of the account this entry affects
+          example: 'acc-123'
+        direction:
+          type: string
+          enum: [debit, credit]
+          description: Entry direction
+          example: 'debit'
+        amount:
+          type: number
+          minimum: 0
+          description: Entry amount
+          example: 100.00
+
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: 'Invalid Entries'
+
+tags:
+  - name: accounts
+    description: Account management operations
+  - name: transactions
+    description: Transaction management operations
