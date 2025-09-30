@@ -18,6 +18,16 @@ export const validateTransaction = (
     return res.status(400).json({ error: "Invalid Entries" });
   }
 
+  const debitCount = entries.filter((e) => e.direction === "debit").length;
+  const creditCount = entries.filter((e) => e.direction === "credit").length;
+
+  // Enforce exactly one debit and one credit
+  if (debitCount !== 1 || creditCount !== 1) {
+    return res
+      .status(400)
+      .json({ error: "Transaction must contain exactly one debit and one credit" });
+  }
+
   const totalDebits = entries
     .filter((e) => e.direction === "debit")
     .reduce((sum, e) => sum + e.amount, 0);
